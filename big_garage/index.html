@@ -133,7 +133,7 @@ td.sz { min-width: 80px; max-width: 118px; text-align: left; font-size: .8rem } 
 var D = window.GAR, R = D.rows, AR = D.areas;
 var CRIT = ['Music', 'Mountains', 'Parks', 'Quiet', 'Schools', 'Climate', 'Walk'];
 var DEFW = [6, 4, 2, 6, 6, 6, 0], ATLAS = [6, 4, 2, 6, 6, 6, 6];
-var REG = [['all', 'All'], ['DEN', 'Denver area'], ['BOCO', 'Boulder County'], ['NOCO', 'Fort Collins area'], ['WELD', 'Weld County towns'], ['EAST', 'Eastern plains']];
+var REG = [['all', 'All'], ['FR', 'Front Range'], ['DEN', 'Denver area'], ['BOCO', 'Boulder County'], ['NOCO', 'Fort Collins area'], ['WELD', 'Weld County towns'], ['EAST', 'Eastern plains']];
 var FLT = [['sq', 'Size stated', 'The listing gives square feet or dimensions.', function (r) { return r.sq != null; }],
   ['v', '220V', 'The listing mentions 220 or 240 volt power.', function (r) { return r.v === 'Y'; }],
   ['rv', 'RV door', 'An RV door or a door 12 ft or taller.', function (r) { return r.rv === 'Y'; }],
@@ -205,7 +205,7 @@ var shown = [];
 function render() {
   recompute();
   var col = COLS.filter(function (c) { return c.k === S.sort; })[0] || COLS[8];
-  var list = R.filter(function (r) { return (S.r === 'all' || r.r === S.r) && r.p <= S.p && FLT.every(function (f) { return !S.f[f[0]] || f[3](r); }); });
+  var list = R.filter(function (r) { return (S.r === 'all' || r.r === S.r || (S.r === 'FR' && /^(DEN|BOCO|NOCO)$/.test(r.r))) && r.p <= S.p && FLT.every(function (f) { return !S.f[f[0]] || f[3](r); }); });
   list.sort(function (a, b) { var x = col.v(a), y = col.v(b); return (x < y ? -1 : x > y ? 1 : 0) * S.dir || b.s - a.s; });
   shown = list;
   tbl.innerHTML = head() + '<tbody>' + (list.length ? list.map(row).join('') : '<tr><td class="empty" colspan="' + COLS.length + '">No listings match these filters.</td></tr>') + '</tbody>';
