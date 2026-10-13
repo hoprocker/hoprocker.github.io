@@ -43,12 +43,11 @@ select, input[type="search"] { font: 600 .86rem var(--body); color: var(--ink); 
 .seg button:first-child { border-left: 0 } .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg) }
 .btn { font: 600 .76rem/1 var(--body); letter-spacing: .04em; text-transform: uppercase; border: 1px solid var(--ink); background: transparent; color: var(--ink); border-radius: 4px; padding: 7px 10px; cursor: pointer; white-space: nowrap }
 .btn:hover { background: var(--ink); color: var(--bg) } .btn:disabled { opacity: .4; cursor: default; background: transparent; color: var(--ink) }
-.work { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 18px; align-items: start }
 .listcard { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; min-width: 0; display: flex; flex-direction: column }
 .listhead { display: flex; flex-wrap: wrap; gap: 8px 12px; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid var(--line) }
 .listhead .lsub { margin: 2px 0 0; font-size: .82rem; color: var(--muted) }
 .count { font-size: .88rem; color: var(--muted) }
-.tscroll { overflow: auto; max-height: calc(100vh - 140px) }
+.tscroll { overflow: auto; max-height: min(52vh, 560px) }
 table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: .86rem; font-variant-numeric: tabular-nums }
 th { position: sticky; top: 0; z-index: 2; background: var(--surface); text-align: right; font: 600 .64rem/1.2 var(--body); letter-spacing: .03em; text-transform: uppercase; color: var(--muted); padding: 7px 4px; border-bottom: 1px solid var(--line); vertical-align: bottom }
 th.l, td.l { text-align: left } th button { all: unset; cursor: pointer; display: inline-block } th button[title] { text-decoration: underline dotted; text-underline-offset: 3px }
@@ -56,13 +55,18 @@ th[aria-sort="descending"] button::after { content: " ▼" } th[aria-sort="ascen
 td { padding: 5px 4px; border-bottom: 1px solid var(--soft); text-align: right; white-space: nowrap }
 td.nm { white-space: normal; min-width: 120px; font-size: .84rem; line-height: 1.25 } td.nm b { font-weight: 600 } td.nm span { color: var(--muted); font-size: .76rem }
 td.v { font-family: var(--mono); font-size: .76rem } td.v i { display: inline-block; width: 7px; height: 7px; border-radius: 2px; margin-right: 4px; vertical-align: 0 }
-tbody tr { cursor: pointer } tbody tr:hover td { background: var(--soft) } tbody tr.sel td { background: var(--rowsel) }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 6px; min-width: 0; position: sticky; top: 10px; max-height: calc(100vh - 20px); overflow: auto; display: flex; flex-direction: column }
-.phead { padding: 14px 16px 10px; display: flex; flex-direction: column; gap: 8px; border-bottom: 1px solid var(--line) }
-.phead .sub { color: var(--muted); font-size: .88rem; margin: 0 }
-.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px 14px; margin: 0 }
+tbody tr:hover td { background: var(--soft) }
+.cmp { display: flex; flex-direction: column; gap: 12px }
+.slots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(5, auto); column-gap: 18px; row-gap: 0; align-items: start }
+.slot { grid-row: span 5; display: grid; grid-template-rows: subgrid; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; min-width: 0; overflow: hidden }
+.shead { padding: 12px 16px 10px; display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid var(--line); align-self: stretch }
+.shead .sub { color: var(--muted); font-size: .88rem; margin: 0 } .shead .mt { min-height: 1.1em }
+.pick { display: flex; flex-direction: column; gap: 4px } .pick input { width: min(100%, 340px) }
+.slegend { min-width: 0; max-width: 360px; margin-top: 4px }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px 14px; margin: 0; padding: 12px 16px; border-top: 1px solid var(--line); align-self: stretch }
 .facts div { display: flex; flex-direction: column } .facts dt { font-size: .74rem; color: var(--muted) } .facts dd { margin: 0; font: 500 .95rem var(--mono) }
-.mctl { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: flex-end; padding: 10px 16px; border-bottom: 1px solid var(--line) }
+.mctl { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: flex-end; padding: 12px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 6px }
+.mctl .legend .note { margin: 0 }
 .legend { display: flex; flex-direction: column; gap: 3px; min-width: 200px; flex: 1 }
 .legend .ramp { height: 9px; border-radius: 2px } .legend .ticks { display: flex; justify-content: space-between; font: 400 .7rem var(--mono); color: var(--muted) }
 .mapbox { position: relative; overflow: auto; background: var(--surface) } .mapwrap { width: 100%; transform-origin: 0 0 }
@@ -72,15 +76,18 @@ path.co { fill: none; stroke: var(--ink); stroke-opacity: .5; stroke-width: .9; 
 circle.ci { fill: var(--surface); stroke: var(--ink); stroke-width: 1; pointer-events: none }
 text.cl { font: 600 11px var(--body); fill: var(--ink); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; pointer-events: none }
 .mapouter { position: relative }
+.zm { position: absolute; top: 8px; left: 8px; z-index: 3; display: flex; gap: 4px }
+.zm .btn { background: color-mix(in srgb, var(--surface) 90%, transparent); font-size: .68rem; padding: 6px 8px }
+.zm .btn:hover { background: var(--ink); color: var(--bg) } .zm .btn:disabled { background: color-mix(in srgb, var(--surface) 90%, transparent); color: var(--ink) }
 .inset { position: absolute; top: 8px; right: 8px; padding: 5px 5px 3px; background: color-mix(in srgb, var(--surface) 90%, transparent); border: 1px solid var(--line); border-radius: 4px; pointer-events: none; display: flex; flex-direction: column; align-items: center; gap: 2px }
 .inset svg { display: block } .inset .lb { font: 600 .6rem/1 var(--body); letter-spacing: .08em; color: var(--muted) }
 .inset .st { fill: var(--soft); stroke: var(--muted); stroke-width: .8; stroke-linejoin: round; vector-effect: non-scaling-stroke }
 .inset .me { fill: var(--accent); fill-opacity: .6; stroke: var(--accent); stroke-width: 1.2; stroke-linejoin: round; vector-effect: non-scaling-stroke }
 .inset .ring { fill: none; stroke: var(--accent); stroke-width: 1.5; vector-effect: non-scaling-stroke }
 .loading { padding: 40px 16px; color: var(--muted); text-align: center }
-.nb { padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line) }
-.nb table { font-size: .84rem } .nb th { position: static; background: none } .nb td { text-align: right } .nb td:first-child { text-align: left; white-space: normal }
-.minis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--line) }
+.nb { padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line); align-self: stretch }
+.nb table { font-size: .84rem } .nb th { position: static; background: none } .nb tbody tr:hover td { background: none } .nb td { text-align: right } .nb td:first-child { text-align: left; white-space: normal }
+.minis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding: 12px 16px; border-top: 1px solid var(--line); align-self: stretch }
 .mini { display: flex; flex-direction: column; gap: 2px; min-width: 0 } .mini .h { display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted) } .mini .h b { color: var(--ink); font: 500 .8rem var(--mono) }
 .mini svg { width: 100%; height: auto; display: block; overflow: visible } .mini .axis { font: 400 9px var(--mono); fill: var(--muted) } .mini .grid { stroke: var(--line); stroke-width: .6 } .mini .zero { stroke: var(--muted); stroke-width: .8 }
 .mini .ln { fill: none; stroke: var(--ink); stroke-width: 2 } .mini .ar { fill: var(--ink); fill-opacity: .08 } .mini .brk { stroke: var(--muted); stroke-dasharray: 2 2; stroke-width: .7 }
@@ -88,15 +95,15 @@ text.cl { font: 600 11px var(--body); fill: var(--ink); paint-order: stroke; str
 .tip { position: fixed; z-index: 20; pointer-events: none; background: var(--tip); color: var(--tip-ink); font: 400 .82rem/1.35 var(--body); padding: 6px 9px; border-radius: 4px; max-width: 260px }
 .tip .v { font-family: var(--mono) }
 .notes { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; max-width: 92ch; font-size: .92rem }
-@media (max-width: 1100px) { .work { grid-template-columns: 1fr } .panel { position: static; max-height: none } .tscroll { max-height: 70vh } }
-@media (max-width: 560px) { .inset svg { transform: scale(.75); transform-origin: top right } .minis { grid-template-columns: 1fr } .legend { min-width: 0; width: 100% } }
+@media (max-width: 900px) { .slots { grid-template-columns: 1fr; grid-template-rows: none; row-gap: 18px } .slot { grid-row: auto; grid-template-rows: none; display: flex; flex-direction: column } .tscroll { max-height: 60vh } }
+@media (max-width: 560px) { .inset svg { transform: scale(.75); transform-origin: top right } .minis { grid-template-columns: 1fr } .legend { min-width: 0; width: 100%; flex-basis: 100% } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important } }
 </style>
 <div class="wrap">
 <header class="mast">
 <p class="eyebrow">Companion to the U.S. Neighborhood Change Atlas · Census estimates 2010–2025 and American Community Survey 2009–13 and 2020–24</p>
 <h1>U.S. Metro Explorer</h1>
-<p>All 387 U.S. metropolitan areas, from New York to Enid, Oklahoma. Sort the list by growth, families, aging, turnover or housing, then pick a metro to open its neighborhood map beside the list. Click any neighborhood for its own figures, then and now.</p>
+<p>All 387 U.S. metropolitan areas, from New York to Enid, Oklahoma. Sort the list by growth, families, aging, turnover or housing, then put two metros side by side: each gets its own neighborhood map, sharing one set of map controls. Click any neighborhood for its own figures, then and now.</p>
 </header>
 <div class="bar">
 <div class="grp"><span class="lab" id="lab-set">List shows</span><div class="seg" id="set" role="group" aria-labelledby="lab-set"></div></div>
@@ -104,24 +111,19 @@ text.cl { font: 600 11px var(--body); fill: var(--ink); paint-order: stroke; str
 <div class="grp"><label class="lab" for="stf">State</label><select id="stf"><option value="">All states</option></select></div>
 <div class="grp"><label class="lab" for="q">Find a metro</label><input type="search" id="q" placeholder="e.g. Boise, Asheville, Fort Collins"></div>
 </div>
-<section class="work">
-<div class="listcard">
-<div class="listhead"><div><h2 id="lt">Metro areas</h2><p class="lsub">Census metro areas: a core city of 50,000+ plus its commuter counties. Click a row to open its neighborhood map.</p></div><span class="count" id="count"></span></div>
+<section class="listcard">
+<div class="listhead"><div><h2 id="lt">Metro areas</h2><p class="lsub">Census metro areas: a core city of 50,000+ plus its commuter counties. Sort by any column; pick the two metros to compare in the map slots below.</p></div><span class="count" id="count"></span></div>
 <div class="tscroll" id="tscroll"><table id="tbl"></table></div>
-</div>
-<aside class="panel" id="panel">
-<div class="phead" id="phead"></div>
-<div class="minis" id="minis"></div>
+</section>
+<section class="cmp" aria-label="Compare two metros">
 <div class="mctl">
 <div class="grp"><label class="lab" for="nm">Neighborhoods shaded by</label><select id="nm"></select></div>
 <div class="grp"><span class="lab" id="lab-per">Survey years</span><div class="seg" id="per" role="group" aria-labelledby="lab-per"></div></div>
 <div class="grp" id="g-who"><span class="lab" id="lab-who">Households</span><div class="seg" id="who" role="group" aria-labelledby="lab-who"></div></div>
+<div class="grp"><span class="lab" id="lab-sc">Colors compare</span><div class="seg" id="sc" role="group" aria-labelledby="lab-sc"></div></div>
 <div class="legend" id="legend" aria-hidden="true"></div>
-<div class="grp"><span class="lab">Map</span><div style="display:flex;gap:6px"><button type="button" class="btn" id="z-in">Zoom in</button><button type="button" class="btn" id="z-out">Zoom out</button></div></div>
 </div>
-<div class="mapouter"><div class="mapbox" id="mapbox"><div class="mapwrap" id="mapwrap"><svg id="map" role="img" aria-label="Neighborhood map of the selected metro area"></svg></div></div><div class="inset" id="inset" aria-hidden="true"></div></div>
-<div class="nb" id="nb"></div>
-</aside>
+<div class="slots" id="slots"></div>
 </section>
 <section style="display:flex;flex-direction:column;gap:10px">
 <h2>How to read it</h2>
@@ -131,7 +133,7 @@ text.cl { font: 600 11px var(--body); fill: var(--ink); paint-order: stroke; str
 <li><b>Turnover, households and housing</b> come from the American Community Survey, which pools five years of responses: 2020–24 and 2009–13. "Moved in recently" means since 2020 in the 2020–24 survey and since 2010 in the 2009–13 survey, which cover different spans of time, so there is no change view for it. "20+ years" means since before 2000 (or before 1990). "Typical years in the home" is the middle of the survey period minus the median year households moved in.</li>
 <li><b>Bachelor’s or higher</b> is the share of adults 25 and older whose highest schooling is a bachelor’s, master’s, professional or doctoral degree (survey table B15003). It counts people, not households. The change view compares the 2009–13 and 2020–24 surveys in percentage points.</li>
 <li><b>Neighborhoods</b> are 2020 census tracts, about 4,000 people each. The 2009–13 survey used 2010 tracts; its figures are moved onto 2020 tracts by shared land area, and medians (age, home value, income) are averaged, so treat the then-and-now comparison for a single neighborhood as approximate. Survey figures for one neighborhood carry wide margins of error; patterns across several neighborhoods are more reliable than any one.</li>
-<li><b>Colors.</b> List cells are shaded by where the metro falls among the metros shown, darker for higher values in both light and dark themes; this marks size, not good or bad. On the map, levels are shaded the same way, darker for higher; neighborhoods are compared within the selected metro, from its 2nd to its 98th percentile (5th to 95th for changes); changes use red for decreases and blue for increases, and the most extreme neighborhoods take the end color. Home values and incomes are in dollars of each period, not adjusted for inflation.</li>
+<li><b>Colors.</b> List cells are shaded by where the metro falls among the metros shown, darker for higher values in both light and dark themes; this marks size, not good or bad. On the map, levels are shaded the same way, darker for higher; by default both maps share one color scale, set from the 2nd to the 98th percentile of the two metros' neighborhoods together (5th to 95th for changes), so the same color means the same value on both sides; switch Colors compare to Each metro to scale each map on its own; changes use red for decreases and blue for increases, and the most extreme neighborhoods take the end color. Home values and incomes are in dollars of each period, not adjusted for inflation.</li>
 </ul>
 </section>
 </div>
@@ -141,8 +143,8 @@ text.cl { font: 600 11px var(--body); fill: var(--ink); paint-order: stroke; str
 <script>(function () {
 var MET = window.MET, byId = {};
 MET.forEach(function (m) { byId[m[0]] = m; });
-var KEY = 'us-metro-explorer-v1';
-var S = { set: 'growth', sort: 'pop', dir: -1, minpop: 50000, st: '', sel: '19740', nm: 'new', per: 'a', who: 'r', z: 1 };
+var KEY = 'us-metro-explorer-v2';
+var S = { set: 'growth', sort: 'pop', dir: -1, minpop: 50000, st: '', slots: ['19740', '42660'], nm: 'new', per: 'a', who: 'r', sc: 'both', z: 1 };
 try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv) S = Object.assign(S, sv); } catch (e) {}
 function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
 
@@ -204,7 +206,6 @@ qEl.addEventListener('input', list);
 tbl.addEventListener('click', function (e) {
   var b = e.target.closest('thead th button');
   if (b) { var k = b.dataset.k; if (S.sort === k) S.dir = -S.dir; else { S.sort = k; S.dir = k === 'nm' ? 1 : -1; } save(); list(); return; }
-  var tr = e.target.closest('tr[data-id]'); if (tr) select(tr.dataset.id);
 });
 function list() {
   var cols = COLS[S.set], f = qEl.value.trim().toLowerCase();
@@ -217,12 +218,12 @@ function list() {
   L.sort(function (a, b) { var x = get(a), y = get(b); if (x == null) return 1; if (y == null) return -1; return (x < y ? -1 : x > y ? 1 : 0) * S.dir; });
   function th(k, lab, sub, t, cls) { return '<th class="' + (cls || '') + '"' + (S.sort === k ? ' aria-sort="' + (S.dir < 0 ? 'descending' : 'ascending') + '"' : '') + '><button type="button" data-k="' + k + '"' + (t ? ' title="' + esc(t) + '"' : '') + '>' + lab + (sub ? '<br><span style="text-transform:none;letter-spacing:0;font-weight:400">' + sub + '</span>' : '') + '</button></th>'; }
   tbl.innerHTML = '<thead><tr>' + th('nm', 'Metro area', '', '', 'l') + th('pop', 'Population', '2025', 'Population, July 2025.') + cols.map(function (c) { return th(c[0], c[1], c[2], c[5]); }).join('') + '</tr></thead><tbody>' +
-    L.map(function (m) { var parts = m[1].split(', '); return '<tr data-id="' + m[0] + '"' + (m[0] === S.sel ? ' class="sel"' : '') + '><td class="nm l"><b>' + esc(parts[0]) + '</b> <span>' + esc(parts[1] || '') + '</span></td><td class="v">' + big(m[3][15]) + '</td>' +
+    L.map(function (m) { var parts = m[1].split(', '); return '<tr><td class="nm l"><b>' + esc(parts[0]) + '</b> <span>' + esc(parts[1] || '') + '</span></td><td class="v">' + big(m[3][15]) + '</td>' +
       cols.map(function (c) { var v = c[3](m), r = rank(c[0], v); return '<td class="v">' + (r == null ? '' : '<i style="background:' + lerp(RAMP.seq, r) + '"></i>') + c[4](v) + '</td>'; }).join('') + '</tr>'; }).join('') + '</tbody>';
   document.getElementById('count').textContent = L.length + ' of ' + MET.length + ' metros';
 }
 
-/* ---------- neighborhood map ---------- */
+/* ---------- shared map controls ---------- */
 var NMS = [['new', 'Moved in recently', function () { return { r: 10, o: 11, all: 12 }[S.who]; }, pct1, 'p'], ['root', 'In their home 20+ years', function () { return { r: 13, o: 14, all: 15 }[S.who]; }, pct1, 'p'],
   ['mv1', 'Moved in the past year', 0, pct1, 'p'], ['rten', 'Renters: typical years in home', 1, function (v) { return nf(v, 0) + ' yrs'; }, 'y'], ['oten', 'Owners: typical years in home', 2, function (v) { return nf(v, 0) + ' yrs'; }, 'y'],
   ['hhk', 'Households with children', 3, pct1, 'p'], ['u18', 'Residents under 18', 7, pct1, 'p'], ['o65', 'Residents 65 and older', 8, pct1, 'p'], ['med', 'Median age', 9, function (v) { return nf(v, 1); }, 'y1'],
@@ -232,77 +233,123 @@ var nmEl = document.getElementById('nm'); nmEl.innerHTML = NMS.map(function (n) 
 nmEl.addEventListener('change', function () { S.nm = nmEl.value; if (S.nm === 'new' && S.per === 'd') S.per = 'a'; save(); paint(); });
 function seg(id, opts, key) {
   var el = document.getElementById(id);
-  el.innerHTML = opts.map(function (o) { return '<button type="button" data-v="' + o[0] + '">' + o[1] + '</button>'; }).join('');
+  el.innerHTML = opts.map(function (o) { return '<button type="button" data-v="' + o[0] + '"' + (o[2] ? ' title="' + esc(o[2]) + '"' : '') + '>' + o[1] + '</button>'; }).join('');
   el.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; S[key] = b.dataset.v; save(); paint(); });
 }
 seg('per', [['a', '2020–24'], ['b', '2009–13'], ['d', 'Change']], 'per');
 seg('who', [['r', 'Renters'], ['o', 'Owners'], ['all', 'All']], 'who');
+seg('sc', [['both', 'Both metros', 'One color scale for both maps, so the same color means the same value on each side.'], ['each', 'Each metro', 'Each map scaled to its own neighborhoods, to see the pattern inside each metro.']], 'sc');
 function idx(n) { return typeof n[2] === 'function' ? n[2]() : n[2]; }
 function tv(t, n) { var j = idx(n), a = t[3] ? t[3][j] : null, b = t[4] ? t[4][j] : null; if (S.per === 'a') return a; if (S.per === 'b') return b; if (a == null || b == null) return null; return n[4] === '$' ? (b ? 100 * (a / b - 1) : null) : a - b; }
 function tfmt(n) { return S.per === 'd' ? function (v) { return n[4] === '$' ? sg(v, 1, '%') : n[4] === 'p' ? sg(v, 1, ' pts') : sg(v, n[4] === 'y1' ? 1 : 0, ' yrs'); } : n[3]; }
-var CACHE = {}, CUR = null, DOM = [0, 1];
-var svg = document.getElementById('map'), wrap = document.getElementById('mapwrap'), box = document.getElementById('mapbox');
+
+/* ---------- the two compare slots ---------- */
+var CACHE = {};
 function load(id) {
   if (CACHE[id]) return Promise.resolve(CACHE[id]);
   return fetch('m/' + id + '.json').then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }).then(function (d) { CACHE[id] = d; return d; });
 }
-function select(id) {
-  if (!byId[id]) return; S.sel = id; S.z = 1; selT = null; save();
-  [].forEach.call(tbl.querySelectorAll('tbody tr'), function (r) { r.classList.toggle('sel', r.dataset.id === id); });
-  header(); inset(id); svg.innerHTML = ''; document.getElementById('nb').innerHTML = '<p class="loading">Loading neighborhoods…</p>';
-  load(id).then(function (d) { if (S.sel !== id) return; CUR = d; draw(); }).catch(function () { document.getElementById('nb').innerHTML = '<p class="loading">The neighborhood map for this metro could not be loaded. Reload the page to try again.</p>'; });
+var byName = {}; MET.forEach(function (m) { byName[m[1].toLowerCase()] = m[0]; });
+var names = MET.map(function (m) { return m[1]; }).sort();
+if (!Array.isArray(S.slots) || S.slots.length !== 2) S.slots = ['19740', '42660'];
+var slotsEl = document.getElementById('slots');
+slotsEl.innerHTML = [0, 1].map(function (i) {
+  return '<article class="slot" data-s="' + i + '"><div class="shead"><div class="pick"><label class="lab" for="pk' + i + '">' + (i ? 'Right' : 'Left') + ' map: choose a metro</label><input type="search" id="pk' + i + '" list="mlist" placeholder="Type a metro, e.g. ' + (i ? 'Seattle' : 'Denver') + '" autocomplete="off"></div>' +
+    '<h2 class="mt"></h2><p class="sub"></p><div class="legend slegend" hidden></div></div>' +
+    '<div class="mapouter"><div class="zm"><button type="button" class="btn zin" aria-label="Zoom in on the ' + (i ? 'right' : 'left') + ' map">Zoom in</button><button type="button" class="btn zout" aria-label="Zoom out on the ' + (i ? 'right' : 'left') + ' map">Zoom out</button></div><div class="mapbox"><div class="mapwrap"><svg class="map" role="img"></svg></div></div><div class="inset" aria-hidden="true"></div></div>' +
+    '<dl class="facts"></dl><div class="minis"></div><div class="nb"></div></article>';
+}).join('') + '<datalist id="mlist">' + names.map(function (n) { return '<option value="' + esc(n) + '">'; }).join('') + '</datalist>';
+var SL = [0, 1].map(function (i) {
+  var el = slotsEl.querySelector('.slot[data-s="' + i + '"]'), q = function (c) { return el.querySelector(c); };
+  return { i: i, el: el, svg: q('svg.map'), wrap: q('.mapwrap'), box: q('.mapbox'), ins: q('.inset'), nbEl: q('.nb'), pick: q('input'), zin: q('.zin'), zout: q('.zout'), z: 1, id: null, d: null, selT: null, dom: [0, 1] };
+});
+function findMetro(v) {
+  v = v.trim().toLowerCase(); if (!v) return null;
+  if (byName[v]) return byName[v];
+  var hit = names.filter(function (n) { return n.toLowerCase().indexOf(v) >= 0; });
+  hit.sort(function (a, b) { return byId[byName[b.toLowerCase()]][3][15] - byId[byName[a.toLowerCase()]][3][15]; });
+  return hit.length ? byName[hit[0].toLowerCase()] : null;
+}
+SL.forEach(function (sl) {
+  function go() { var id = findMetro(sl.pick.value); if (id) { sl.pick.value = ''; sl.pick.blur(); setSlot(sl, id); } }
+  sl.pick.addEventListener('change', go);
+  sl.pick.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+  sl.svg.addEventListener('mousemove', function (e) { var p = e.target.closest('path.t'); if (!p || !sl.d) { tip.hidden = true; return; } var t = sl.d.t[+p.dataset.i], n = NMI[S.nm], c = near(sl, t); showTip(e, (c ? 'Near <b>' + esc(c) + '</b>' : 'Neighborhood') + '<br>' + esc(n[1]) + ': <span class="v">' + tfmt(n)(tv(t, n)) + '</span><br>Residents: <span class="v">' + nf(t[2]) + '</span>'); });
+  sl.svg.addEventListener('mouseleave', function () { tip.hidden = true; });
+  sl.zin.addEventListener('click', function () { var cx = (sl.box.scrollLeft + sl.box.clientWidth / 2) / sl.wrap.clientWidth, cy = (sl.box.scrollTop + sl.box.clientHeight / 2) / sl.wrap.clientHeight; setZoom(sl, Math.min(8, sl.z * 2)); sl.box.scrollLeft = cx * sl.wrap.clientWidth - sl.box.clientWidth / 2; sl.box.scrollTop = cy * sl.wrap.clientHeight - sl.box.clientHeight / 2; });
+  sl.zout.addEventListener('click', function () { setZoom(sl, Math.max(1, sl.z / 2)); });
+  sl.svg.addEventListener('click', function (e) { var p = e.target.closest('path.t'); if (!p) return; sl.selT = +p.dataset.i; paint(); });
+});
+function setSlot(sl, id) {
+  if (!byId[id]) return; S.slots[sl.i] = id; save();
+  sl.id = id; sl.d = null; sl.selT = null; setZoom(sl, 1); sl.box.scrollLeft = sl.box.scrollTop = 0;
+  sl.svg.innerHTML = ''; sl.svg.setAttribute('aria-label', 'Neighborhood map of ' + byId[id][1]); sl.nbEl.innerHTML = '<p class="loading">Loading neighborhoods…</p>';
+  headers(); inset(sl);
+  load(id).then(function (d) { if (sl.id !== id) return; sl.d = d; draw(sl); paint(); }).catch(function () { sl.nbEl.innerHTML = '<p class="loading">The neighborhood map for this metro could not be loaded. Reload the page to try again.</p>'; });
 }
 /* locator inset: the metro's state(s) with the metro filled */
-function inset(id) {
-  var el = document.getElementById('inset'), m = window.INS && INS.m[id];
+function inset(sl) {
+  var el = sl.ins, m = window.INS && INS.m[sl.id];
   if (!m) { el.hidden = true; return; }
   var x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9, g = '';
   m[0].forEach(function (s) { var b = INS.s[s]; if (!b) return; x0 = Math.min(x0, b[0]); y0 = Math.min(y0, b[1]); x1 = Math.max(x1, b[2]); y1 = Math.max(y1, b[3]); g += '<path class="st" d="' + b[5] + '"></path>'; });
-  var w = x1 - x0, h = y1 - y0, pad = Math.max(w, h) * .04, BOX = 104, sc = BOX / Math.max(w, h);
+  var w = x1 - x0, h = y1 - y0, pad = Math.max(w, h) * .04, BOX = 96, sc = BOX / Math.max(w, h);
   g += '<path class="me" d="' + m[1] + '"></path>';
   if (m[4] < Math.max(w, h) * .07) g += '<circle class="ring" cx="' + m[2] + '" cy="' + m[3] + '" r="' + (8 / sc).toFixed(1) + '"></circle>';
   el.innerHTML = '<svg width="' + Math.round(w * sc) + '" height="' + Math.round(h * sc) + '" viewBox="' + (x0 - pad) + ' ' + (y0 - pad) + ' ' + (w + 2 * pad) + ' ' + (h + 2 * pad) + '">' + g + '</svg><span class="lb">' + m[0].map(function (s) { return INS.s[s] ? INS.s[s][4] : ''; }).join(' · ') + '</span>';
   el.hidden = false;
 }
-function draw() {
-  var d = CUR; svg.setAttribute('viewBox', '0 0 ' + d.w + ' ' + d.h);
-  svg.innerHTML = '<g id="gt">' + d.t.map(function (t, i) { return '<path class="t" data-i="' + i + '" d="' + t[1] + '"></path>'; }).join('') + '</g><path class="co" d="' + d.co + '"></path><g id="gl"></g>';
-  setZoom(1); paint();
+function draw(sl) {
+  var d = sl.d; sl.svg.setAttribute('viewBox', '0 0 ' + d.w + ' ' + d.h); sl.box.style.aspectRatio = d.w + ' / ' + d.h;
+  sl.svg.innerHTML = '<g>' + d.t.map(function (t, i) { return '<path class="t" data-i="' + i + '" d="' + t[1] + '"></path>'; }).join('') + '</g><path class="co" d="' + d.co + '"></path><g class="gl"></g>';
+  labels(sl);
 }
-function labels() {
-  if (!CUR) return; var n = S.z >= 4 ? 40 : S.z >= 2 ? 18 : 8, k = 1 / Math.sqrt(S.z);
-  document.getElementById('gl').innerHTML = CUR.ci.slice(0, n).map(function (c) { return '<circle class="ci" cx="' + c[2] + '" cy="' + c[3] + '" r="' + (2.6 * k).toFixed(2) + '"></circle><text class="cl" x="' + (c[2] + 5 * k).toFixed(1) + '" y="' + (c[3] + 4 * k).toFixed(1) + '" style="font-size:' + (11 * k).toFixed(1) + 'px">' + esc(c[1]) + '</text>'; }).join('');
+function labels(sl) {
+  if (!sl.d) return; var n = sl.z >= 4 ? 40 : sl.z >= 2 ? 18 : 8, k = sl.z > 1 ? 1.15 / sl.z : 1;
+  sl.svg.querySelector('g.gl').innerHTML = sl.d.ci.slice(0, n).map(function (c) { return '<circle class="ci" cx="' + c[2] + '" cy="' + c[3] + '" r="' + (2.6 * k).toFixed(2) + '"></circle><text class="cl" x="' + (c[2] + 5 * k).toFixed(1) + '" y="' + (c[3] + 4 * k).toFixed(1) + '" style="font-size:' + (11 * k).toFixed(1) + 'px">' + esc(c[1]) + '</text>'; }).join('');
+}
+function domain(v, kind) {
+  v = v.filter(function (x) { return x != null && isFinite(x); }).sort(function (a, b) { return a - b; });
+  if (!v.length) return [0, 1];
+  var qa = kind === 'div' ? .05 : .02, lo = v[Math.floor(v.length * qa)], hi = v[Math.min(v.length - 1, Math.floor(v.length * (1 - qa)))];
+  if (kind === 'div') { var mm = Math.max(Math.abs(lo), Math.abs(hi)) || 1; return [-mm, mm]; }
+  return [lo, hi > lo ? hi : lo + 1];
+}
+function legendHTML(n, dom, st) {
+  var f = tfmt(n), grad = st.map(function (c, i) { return 'rgb(' + c.join(',') + ') ' + Math.round(100 * i / (st.length - 1)) + '%'; }).join(',');
+  return '<span class="lab">' + esc(n[1]) + (S.nm === 'new' ? ' (' + (S.per === 'b' ? 'since 2010' : 'since 2020') + ')' : S.nm === 'root' ? ' (' + (S.per === 'b' ? 'before 1990' : 'before 2000') + ')' : '') + '</span><div class="ramp" style="background:linear-gradient(90deg,' + grad + ')"></div><div class="ticks">' + [0, .5, 1].map(function (t) { return '<span>' + f(dom[0] + t * (dom[1] - dom[0])) + '</span>'; }).join('') + '</div>';
 }
 function paint() {
   [].forEach.call(document.getElementById('per').children, function (b) { b.setAttribute('aria-pressed', b.dataset.v === S.per); b.hidden = b.dataset.v === 'd' && S.nm === 'new'; });
   [].forEach.call(document.getElementById('who').children, function (b) { b.setAttribute('aria-pressed', b.dataset.v === S.who); });
+  [].forEach.call(document.getElementById('sc').children, function (b) { b.setAttribute('aria-pressed', b.dataset.v === S.sc); });
   document.getElementById('g-who').hidden = !(S.nm === 'new' || S.nm === 'root');
-  if (!CUR) return;
-  var n = NMI[S.nm] || NMS[0], kind = S.per === 'd' ? 'div' : 'seq', vals = CUR.t.map(function (t) { return tv(t, n); });
-  var v = vals.filter(function (x) { return x != null && isFinite(x); }).sort(function (a, b) { return a - b; });
-  if (v.length) { var qa = kind === 'div' ? .05 : .02, lo = v[Math.floor(v.length * qa)], hi = v[Math.min(v.length - 1, Math.floor(v.length * (1 - qa)))]; if (kind === 'div') { var mm = Math.max(Math.abs(lo), Math.abs(hi)) || 1; DOM = [-mm, mm]; } else DOM = [lo, hi > lo ? hi : lo + 1]; }
-  var ps = svg.querySelectorAll('path.t'), st = kind === 'div' ? RAMP.div : RAMP.seq;
-  for (var i = 0; i < ps.length; i++) { var x = vals[i]; ps[i].style.fill = x == null || !isFinite(x) ? RAMP.nul : lerp(st, (x - DOM[0]) / (DOM[1] - DOM[0])); ps[i].classList.toggle('sel', i === selT); }
-  var s = svg.querySelector('path.t.sel'); if (s) s.parentNode.appendChild(s);
-  var f = tfmt(n), grad = st.map(function (c, i) { return 'rgb(' + c.join(',') + ') ' + Math.round(100 * i / (st.length - 1)) + '%'; }).join(',');
-  document.getElementById('legend').innerHTML = '<span class="lab">' + esc(n[1]) + (S.nm === 'new' ? ' (' + (S.per === 'b' ? 'since 2010' : 'since 2020') + ')' : S.nm === 'root' ? ' (' + (S.per === 'b' ? 'before 1990' : 'before 2000') + ')' : '') + '</span><div class="ramp" style="background:linear-gradient(90deg,' + grad + ')"></div><div class="ticks">' + [0, .5, 1].map(function (t) { return '<span>' + f(DOM[0] + t * (DOM[1] - DOM[0])) + '</span>'; }).join('') + '</div>';
-  labels(); nb();
+  var n = NMI[S.nm] || NMS[0], kind = S.per === 'd' ? 'div' : 'seq', st = kind === 'div' ? RAMP.div : RAMP.seq;
+  var all = [];
+  SL.forEach(function (sl) { sl.vals = sl.d ? sl.d.t.map(function (t) { return tv(t, n); }) : []; all = all.concat(sl.vals); });
+  var shared = domain(all, kind), both = S.sc === 'both';
+  SL.forEach(function (sl) {
+    var lg = sl.el.querySelector('.slegend');
+    sl.dom = both ? shared : domain(sl.vals, kind);
+    lg.hidden = both || !sl.d; if (!both) lg.innerHTML = legendHTML(n, sl.dom, st);
+    if (!sl.d) return;
+    var ps = sl.svg.querySelectorAll('path.t'), D = sl.dom;
+    for (var i = 0; i < ps.length; i++) { var x = sl.vals[i]; ps[i].style.fill = x == null || !isFinite(x) ? RAMP.nul : lerp(st, (x - D[0]) / (D[1] - D[0])); ps[i].classList.toggle('sel', i === sl.selT); }
+    var s = sl.svg.querySelector('path.t.sel'); if (s) s.parentNode.appendChild(s);
+    labels(sl); nb(sl);
+  });
+  var lgEl = document.getElementById('legend');
+  lgEl.innerHTML = both ? legendHTML(n, shared, st) : '<span class="lab">' + esc(n[1]) + '</span><p class="note">Each map has its own scale, shown above it.</p>';
 }
-function setZoom(z) { S.z = z; wrap.style.width = (100 * z) + '%'; document.getElementById('z-out').disabled = z <= 1; document.getElementById('z-in').disabled = z >= 8; labels(); }
-document.getElementById('z-in').addEventListener('click', function () { var cx = (box.scrollLeft + box.clientWidth / 2) / wrap.clientWidth, cy = (box.scrollTop + box.clientHeight / 2) / wrap.clientHeight; setZoom(Math.min(8, S.z * 2)); box.scrollLeft = cx * wrap.clientWidth - box.clientWidth / 2; box.scrollTop = cy * wrap.clientHeight - box.clientHeight / 2; });
-document.getElementById('z-out').addEventListener('click', function () { setZoom(Math.max(1, S.z / 2)); });
-function near(t) { var bb = svg.querySelector('path.t[data-i="' + CUR.t.indexOf(t) + '"]').getBBox(), cx = bb.x + bb.width / 2, cy = bb.y + bb.height / 2, best = null, bd = 1e9; CUR.ci.forEach(function (c) { var d = (c[2] - cx) * (c[2] - cx) + (c[3] - cy) * (c[3] - cy); if (d < bd) { bd = d; best = c; } }); return best ? best[1] : null; }
+function setZoom(sl, z) { sl.z = z; sl.wrap.style.width = (100 * z) + '%'; sl.zout.disabled = z <= 1; sl.zin.disabled = z >= 8; labels(sl); }
+function near(sl, t) { var bb = sl.svg.querySelector('path.t[data-i="' + sl.d.t.indexOf(t) + '"]').getBBox(), cx = bb.x + bb.width / 2, cy = bb.y + bb.height / 2, best = null, bd = 1e9; sl.d.ci.forEach(function (c) { var d = (c[2] - cx) * (c[2] - cx) + (c[3] - cy) * (c[3] - cy); if (d < bd) { bd = d; best = c; } }); return best ? best[1] : null; }
 function showTip(e, html) { tip.innerHTML = html; tip.hidden = false; var x = e.clientX + 14, y = e.clientY + 14, w = tip.offsetWidth, h = tip.offsetHeight; if (x + w > innerWidth - 8) x = e.clientX - w - 14; if (y + h > innerHeight - 8) y = e.clientY - h - 14; tip.style.left = x + 'px'; tip.style.top = y + 'px'; }
-svg.addEventListener('mousemove', function (e) { var p = e.target.closest('path.t'); if (!p || !CUR) { tip.hidden = true; return; } var t = CUR.t[+p.dataset.i], n = NMI[S.nm], c = near(t); showTip(e, (c ? 'Near <b>' + esc(c) + '</b>' : 'Neighborhood') + '<br>' + esc(n[1]) + ': <span class="v">' + tfmt(n)(tv(t, n)) + '</span><br>Residents: <span class="v">' + nf(t[2]) + '</span>'); });
-svg.addEventListener('mouseleave', function () { tip.hidden = true; });
-var selT = null;
-svg.addEventListener('click', function (e) { var p = e.target.closest('path.t'); if (!p) return; selT = +p.dataset.i; paint(); document.getElementById('nb').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); });
 
-/* ---------- metro header + charts ---------- */
+/* ---------- metro headers + charts (rates share one scale across both sides) ---------- */
 function mini(title, vals, y0, opts) {
   var W = 240, H = 84, L = 30, R = 6, T = 6, B = 15, n = vals.length, v = vals.filter(function (x) { return x != null; });
   if (!v.length) return '';
-  var lo = Math.min.apply(null, v), hi = Math.max.apply(null, v); if (opts.bars) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); } if (hi - lo < 1e-9) { hi += 1; lo -= 1; } var pad = (hi - lo) * .08; if (!opts.bars) lo -= pad; hi += pad;
+  var lo = opts.rng ? opts.rng[0] : Math.min.apply(null, v), hi = opts.rng ? opts.rng[1] : Math.max.apply(null, v); if (opts.bars) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); } if (hi - lo < 1e-9) { hi += 1; lo -= 1; } var pad = (hi - lo) * .08; if (!opts.bars) lo -= pad; hi += pad;
   var x = function (i) { return L + (W - L - R) * i / (n - 1); }, y = function (u) { return T + (H - T - B) * (1 - (u - lo) / (hi - lo)); }, g = '';
   [lo, (lo + hi) / 2, hi].forEach(function (u) { g += '<line class="grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(u).toFixed(1) + '" y2="' + y(u).toFixed(1) + '"/><text class="axis" x="' + (L - 4) + '" y="' + (y(u) + 3).toFixed(1) + '" text-anchor="end">' + opts.tick(u) + '</text>'; });
   if (lo < 0 && hi > 0) g += '<line class="zero" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(0).toFixed(1) + '" y2="' + y(0).toFixed(1) + '"/>';
@@ -313,25 +360,39 @@ function mini(title, vals, y0, opts) {
   var last = null; for (var i = n - 1; i >= 0; i--) if (vals[i] != null) { last = vals[i]; break; }
   return '<div class="mini"><div class="h"><span>' + title + '</span><b>' + opts.fmt(last) + '</b></div><svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(title) + ' by year">' + g + '</svg></div>';
 }
-function header() {
-  var m = byId[S.sel], a = m[9] || {}, b = m[10] || {};
-  document.getElementById('phead').innerHTML = '<h2>' + esc(m[1]) + '</h2><p class="sub">' + nf(m[3][15]) + ' people in 2025 · ' + (m[3][0] != null ? sg(pc(m[3][0], m[3][15]), 1, '%') + ' since 2010 · ' : '') + sg(pc(m[3][10], m[3][15]), 1, '%') + ' since 2020</p>' +
-    '<dl class="facts"><div><dt>Net moves in, 2021–25</dt><dd>' + sg(avg(m[6], 10, 14), 1) + ' /1,000</dd></div><div><dt>Children, 2020 → 25</dt><dd>' + sg(pc(m[4][10], m[4][15]), 1, '%') + '</dd></div><div><dt>Median age, 2025</dt><dd>' + nf(m[8][5], 1) + '</dd></div>' +
-    '<div><dt>Moved in past year</dt><dd>' + pct1(a.mv1) + ' <span class="note">(' + pct1(b.mv1) + ' in 2009–13)</span></dd></div><div><dt>Renters new since 2020</dt><dd>' + pct1(a.rnew) + '</dd></div><div><dt>Home value / income</dt><dd>' + money(a.hv) + ' / ' + money(a.inc) + '</dd></div></dl>';
-  document.getElementById('minis').innerHTML = mini('Population', m[3], 2010, { fmt: big, tick: big }) + mini('Net moves in, per 1,000', m[6], 2011, { bars: true, fmt: function (v) { return sg(v, 1); }, tick: function (v) { return nf(v, 0); } }) +
-    mini('Children under 18', m[4].map(function (k, i) { return k && m[3][i] ? 100 * k / m[3][i] : null; }), 2010, { fmt: pct1, tick: function (v) { return nf(v, 0) + '%'; } }) + mini('Age 65 and older', m[5].map(function (k, i) { return k && m[3][i] ? 100 * k / m[3][i] : null; }), 2010, { fmt: pct1, tick: function (v) { return nf(v, 0) + '%'; } });
+var MINIS = [
+  ['Population', function (m) { return m[3]; }, 2010, { fmt: big, tick: big }, false],
+  ['Net moves in, per 1,000', function (m) { return m[6]; }, 2011, { bars: true, fmt: function (v) { return sg(v, 1); }, tick: function (v) { return nf(v, 0); } }, true],
+  ['Children under 18', function (m) { return m[4].map(function (k, i) { return k && m[3][i] ? 100 * k / m[3][i] : null; }); }, 2010, { fmt: pct1, tick: function (v) { return nf(v, 0) + '%'; } }, true],
+  ['Age 65 and older', function (m) { return m[5].map(function (k, i) { return k && m[3][i] ? 100 * k / m[3][i] : null; }); }, 2010, { fmt: pct1, tick: function (v) { return nf(v, 0) + '%'; } }, true]];
+function headers() {
+  var ms = SL.map(function (sl) { return byId[sl.id]; });
+  var html = ['', ''];
+  MINIS.forEach(function (d) {
+    var series = ms.map(function (m) { return m ? d[1](m) : []; }), rng = null;
+    if (d[4]) { var v = [].concat(series[0], series[1]).filter(function (x) { return x != null; }); if (v.length) { var lo = Math.min.apply(null, v), hi = Math.max.apply(null, v); if (d[3].bars) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); } rng = [lo, hi]; } }
+    series.forEach(function (s, i) { if (ms[i]) html[i] += mini(d[0], s, d[2], Object.assign({}, d[3], { rng: rng })); });
+  });
+  SL.forEach(function (sl, i) {
+    var m = ms[i]; if (!m) return; var a = m[9] || {}, b = m[10] || {}, q = function (c) { return sl.el.querySelector(c); };
+    q('.mt').textContent = m[1];
+    q('.sub').textContent = nf(m[3][15]) + ' people in 2025 · ' + (m[3][0] != null ? sg(pc(m[3][0], m[3][15]), 1, '%') + ' since 2010 · ' : '') + sg(pc(m[3][10], m[3][15]), 1, '%') + ' since 2020';
+    q('.facts').innerHTML = '<div><dt>Net moves in, 2021–25</dt><dd>' + sg(avg(m[6], 10, 14), 1) + ' /1,000</dd></div><div><dt>Children, 2020 → 25</dt><dd>' + sg(pc(m[4][10], m[4][15]), 1, '%') + '</dd></div><div><dt>Median age, 2025</dt><dd>' + nf(m[8][5], 1) + '</dd></div>' +
+      '<div><dt>Moved in past year</dt><dd>' + pct1(a.mv1) + ' <span class="note">(' + pct1(b.mv1) + ' in 2009–13)</span></dd></div><div><dt>Renters new since 2020</dt><dd>' + pct1(a.rnew) + '</dd></div><div><dt>Home value / income</dt><dd>' + money(a.hv) + ' / ' + money(a.inc) + '</dd></div><div><dt>BA or higher, adults 25+</dt><dd>' + pct1(a.ba) + '</dd></div>';
+    q('.minis').innerHTML = html[i];
+  });
 }
 /* neighborhood profile */
-function nb() {
-  var el = document.getElementById('nb');
-  if (!CUR) return;
-  if (selT == null || !CUR.t[selT]) { el.innerHTML = '<p class="note">Click any neighborhood on the map to compare it with the metro as a whole and with itself in 2009–13. City labels are the largest cities and communities; zoom in to see more.</p>'; return; }
-  var t = CUR.t[selT], m = byId[S.sel], a = m[9] || {}, near_ = near(t);
+function nb(sl) {
+  var el = sl.nbEl;
+  if (!sl.d) return;
+  if (sl.selT == null || !sl.d.t[sl.selT]) { el.innerHTML = '<p class="note">Click any neighborhood on this map to compare it with the metro as a whole and with itself in 2009–13. Zoom in to see more city labels.</p>'; return; }
+  var t = sl.d.t[sl.selT], m = byId[sl.id], a = m[9] || {}, near_ = near(sl, t);
   var rows = [['Moved into their home in the past year', 0, 'mv1', pct1], ['Renters who moved in recently', 10, 'rnew', pct1], ['Owners who moved in recently', 11, 'onew', pct1], ['Households in their home 20+ years', 15, 'aroot', pct1], ['Renters: typical years in home', 1, 'rten', function (v) { return nf(v, 0); }], ['Owners: typical years in home', 2, 'oten', function (v) { return nf(v, 0); }],
     ['Households with children', 3, 'hhk', pct1], ['Residents under 18', 7, 'u18', pct1], ['Residents 65 and older', 8, 'o65', pct1], ['Median age', 9, 'med', function (v) { return nf(v, 1); }], ['Households that rent', 4, 'rent', pct1], ['Median home value', 5, 'hv', money], ['Median household income', 6, 'inc', money], ['Adults 25+ with a bachelor\u2019s or higher', 16, 'ba', pct1]];
   el.innerHTML = '<h3>Neighborhood near ' + esc(near_ || 'the metro') + '</h3><p class="note">Census tract ' + t[0].slice(5) + ' · ' + nf(t[2]) + ' residents · "Recently" means since 2020 in 2020–24 and since 2010 in 2009–13.</p><div style="overflow-x:auto"><table><thead><tr><th style="text-align:left">Survey</th><th>2009–13</th><th>2020–24</th><th>Whole metro</th></tr></thead><tbody>' +
-    rows.map(function (r) { return '<tr style="cursor:default"><td>' + r[0] + '</td><td class="v">' + r[3](t[4] ? t[4][r[1]] : null) + '</td><td class="v">' + r[3](t[3] ? t[3][r[1]] : null) + '</td><td class="v">' + r[3](a[r[2]]) + '</td></tr>'; }).join('') + '</tbody></table></div><button type="button" class="btn" id="nb-x" style="align-self:flex-start">Clear selection</button>';
-  document.getElementById('nb-x').addEventListener('click', function () { selT = null; paint(); });
+    rows.map(function (r) { return '<tr><td>' + r[0] + '</td><td class="v">' + r[3](t[4] ? t[4][r[1]] : null) + '</td><td class="v">' + r[3](t[3] ? t[3][r[1]] : null) + '</td><td class="v">' + r[3](a[r[2]]) + '</td></tr>'; }).join('') + '</tbody></table></div><button type="button" class="btn nbx" style="align-self:flex-start">Clear selection</button>';
+  el.querySelector('.nbx').addEventListener('click', function () { sl.selT = null; paint(); });
 }
 
 /* ---------- theme + start ---------- */
@@ -339,7 +400,7 @@ readRamps();
 function retheme() { readRamps(); list(); paint(); }
 var mq = window.matchMedia('(prefers-color-scheme: dark)'); if (mq.addEventListener) mq.addEventListener('change', retheme);
 new MutationObserver(retheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-list(); paint(); select(byId[S.sel] ? S.sel : '19740');
+list(); SL.forEach(function (sl) { setSlot(sl, byId[S.slots[sl.i]] ? S.slots[sl.i] : ['19740', '42660'][sl.i]); }); paint();
 })();
 </script>
 
