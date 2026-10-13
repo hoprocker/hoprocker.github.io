@@ -350,7 +350,7 @@ function paint() {
     if (safe && sl.id) { var sd = window.SAFE && SAFE[sl.id]; lg.hidden = false; lg.innerHTML = (both ? '' : legendHTML(n, sl.dom, st)) + '<p class="note">' + (sd ? 'Shaded inside ' + sd.city + ' city limits only (city police data' + (n[0] === 'sk' ? ', city crash records' : '') + '). ' + (sd.tot[{ sv: 'v', sva: 'v', sp: 'p', spa: 'p', se: 'e', sea: 'e', sk: 'k' }[n[0]]] == null ? 'Not published for ' + sd.city + '.' : '') : 'No neighborhood safety data for this metro yet; Seattle and Denver only.') + '</p>'; }
     if (!sl.d) return;
     var ps = sl.svg.querySelectorAll('path.t'), D = sl.dom;
-    for (var i = 0; i < ps.length; i++) { var x = sl.vals[i]; ps[i].style.fill = x == null || !isFinite(x) ? RAMP.nul : lerp(st, (x - D[0]) / (D[1] - D[0])); ps[i].classList.toggle('sel', i === sl.selT); }
+    for (var j = 0; j < ps.length; j++) { var i = +ps[j].dataset.i, x = sl.vals[i]; ps[j].style.fill = x == null || !isFinite(x) ? RAMP.nul : lerp(st, (x - D[0]) / (D[1] - D[0])); ps[j].classList.toggle('sel', i === sl.selT); }
     var s = sl.svg.querySelector('path.t.sel'); if (s) s.parentNode.appendChild(s);
     var sd0 = safe && window.SAFE && SAFE[sl.id]; frame(sl, sd0 && sd0.tot[{ sv: 'v', sva: 'v', sp: 'p', spa: 'p', se: 'e', sea: 'e', sk: 'k' }[n[0]]] != null ? sd0 : null);
     labels(sl); nb(sl);
