@@ -78,7 +78,7 @@ th button { all: unset; cursor: pointer } th[aria-sort="descending"] button::aft
 td { border-top: 1px solid var(--line); padding: 6px 5px; text-align: center; vertical-align: middle }
 tbody tr { cursor: pointer } tbody tr:hover td { background: var(--tint) } tbody tr.sel td { box-shadow: inset 0 0 0 9999px color-mix(in srgb, var(--sel) 12%, transparent) }
 td.nm b { display: block } td.nm span, td.cn { color: var(--muted); font-size: .78rem } td.cn { max-width: 190px }
-td.lk { font-weight: 700; font-size: .95rem }
+td.lk { font-weight: 700; font-size: .95rem } td.hv { white-space: nowrap; font-weight: 600 }
 .more { display: flex; justify-content: center }
 .notes { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; max-width: 92ch; font-size: .9rem }
 @media (max-width: 1000px) { .work { grid-template-columns: 1fr } .card { position: static } }
@@ -98,6 +98,7 @@ td.lk { font-weight: 700; font-size: .95rem }
 <label class="chk"><input type="checkbox" id="f-stu"> College-dominated towns</label>
 <label class="chk"><input type="checkbox" id="f-res"> Resort and second-home towns</label></div></div>
 <div class="grp"><label class="lab" for="f-cut">Minimum likeness</label><div class="row2 cut"><input type="range" id="f-cut" min="0" max="95" step="5"><output id="f-cut-o" for="f-cut"></output></div></div>
+<div class="grp"><label class="lab" for="f-val">Median home value up to</label><div class="row2 cut"><input type="range" id="f-val" min="0" max="27" step="1"><output id="f-val-o" for="f-val"></output></div></div>
 <div class="grp"><span class="lab">Weights</span><button type="button" class="btn" id="wx-btn" aria-expanded="false" aria-controls="wx">Adjust</button></div>
 </div>
 <div class="wx" id="wx" hidden><ol id="wx-list"></ol>
@@ -125,6 +126,7 @@ td.lk { font-weight: 700; font-size: .95rem }
 <li><b>Progressive</b>: the Democratic share of the two-party vote in the 2020 presidential election, from precincts inside the town (New York Times precinct map). Where a state's precinct data is incomplete, the county's 2024 result is used, nudged 2.5 points toward 2020 levels, and marked in Notes; that is much rougher, because a blue village in a red county looks red.</li>
 <li><b>Walkable</b>: the EPA's national walkability index for the town's most walkable neighborhood, the share of homes built before 1940, and the share of commuters who walk or bike.</li>
 <li><b>Distinct town</b>: full credit outside any urban area of 50,000 or more, less inside one, and least inside one of 150,000 or more, blended with the share of workers who work in their own town.</li>
+<li><b>Median home value</b> is what owners estimate their homes are worth, averaged over 2020–24 (Census ACS), so it runs behind today’s prices, often by 10–20% in places that have risen fast. The Census caps it at $2 million. Phase 2 will add Zillow’s current figures. With the slider set, towns without a value are left out.</li>
 <li><b>Notes flags</b>: college-dominated means more than 30% of residents are college students; resort means more than a quarter of homes are seasonal or second homes; suburb means the town sits inside a big city's urban area.</li>
 </ul>
 </section>
@@ -136,7 +138,7 @@ td.lk { font-weight: 700; font-size: .95rem }
   var T = D.rows.map(function (r) { var o = {}; for (var i = 0; i < C.length; i++) o[C[i]] = r[i]; return o; });
   var REF = T.filter(function (t) { return t.g === YSG; })[0];
   var KEY = 'ys-towns-v1';
-  var DEF = { w: [2, 2, 2, 2, 2, 2], cut: 70, min: 2000, max: 40000, st: '', sub: true, stu: false, res: false, sort: 'lk', dir: -1, sel: YSG, q: '' };
+  var DEF = { w: [2, 2, 2, 2, 2, 2], cut: 70, vi: 27, min: 2000, max: 40000, st: '', sub: true, stu: false, res: false, sort: 'lk', dir: -1, sel: YSG, q: '' };
   var S = JSON.parse(JSON.stringify(DEF));
   try { var sv = JSON.parse(localStorage.getItem(KEY) || 'null'); if (sv && sv.w && sv.w.length === 6) { S = Object.assign(S, sv); S.q = ''; } } catch (e) {}
   function save() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
@@ -172,13 +174,16 @@ td.lk { font-weight: 700; font-size: .95rem }
   }
 
   // controls
+  function vmax(i) { return i >= 27 ? 0 : 150000 + 50000 * i; }
+  function vlab(i) { var v = vmax(i); return !v ? 'Any' : v >= 1e6 ? '$' + (v / 1e6).toFixed(2).replace(/0$/, '') + 'M' : '$' + v / 1000 + 'k'; }
   var POPS = [1500, 2000, 3000, 5000, 10000, 20000, 30000, 40000, 60000];
   $('f-min').innerHTML = POPS.slice(0, -1).map(function (p) { return '<option value="' + p + '">' + fmt(p) + '</option>'; }).join('');
   $('f-max').innerHTML = POPS.slice(1).map(function (p) { return '<option value="' + p + '">' + fmt(p) + '</option>'; }).join('');
   var states = {}; T.forEach(function (t) { states[t.st] = 1; });
   $('f-st').innerHTML = '<option value="">All states</option>' + Object.keys(states).sort().map(function (s) { return '<option>' + s + '</option>'; }).join('');
-  function syncCtl() { $('f-cut').value = S.cut; $('f-cut-o').textContent = S.cut ? S.cut + '+' : 'All'; $('f-min').value = S.min; $('f-max').value = S.max; $('f-st').value = S.st; $('f-sub').checked = S.sub; $('f-stu').checked = S.stu; $('f-res').checked = S.res; }
+  function syncCtl() { $('f-val').value = S.vi; $('f-val-o').textContent = vlab(S.vi); $('f-cut').value = S.cut; $('f-cut-o').textContent = S.cut ? S.cut + '+' : 'All'; $('f-min').value = S.min; $('f-max').value = S.max; $('f-st').value = S.st; $('f-sub').checked = S.sub; $('f-stu').checked = S.stu; $('f-res').checked = S.res; }
   [['f-min', 'min', 1], ['f-max', 'max', 1], ['f-st', 'st', 0]].forEach(function (a) { $(a[0]).addEventListener('change', function () { S[a[1]] = a[2] ? +this.value : this.value; if (S.min >= S.max) { S.max = POPS[Math.min(POPS.length - 1, POPS.indexOf(S.min) + 1)]; syncCtl(); } S.n = 100; save(); update(); }); });
+  $('f-val').addEventListener('input', function () { S.vi = +this.value; $('f-val-o').textContent = vlab(S.vi); S.n = 100; save(); update(); });
   $('f-cut').addEventListener('input', function () { S.cut = +this.value; $('f-cut-o').textContent = S.cut ? S.cut + '+' : 'All'; S.n = 100; save(); update(); });
   [['f-sub', 'sub'], ['f-stu', 'stu'], ['f-res', 'res']].forEach(function (a) { $(a[0]).addEventListener('change', function () { S[a[1]] = this.checked; S.n = 100; save(); update(); }); });
   $('wx-list').innerHTML = TR.map(function (c, i) { return '<li><label for="w' + i + '">' + c[1] + '</label><output id="o' + i + '" for="w' + i + '"></output><input type="range" id="w' + i + '" min="0" max="4" step="1"></li>'; }).join('');
@@ -278,7 +283,7 @@ td.lk { font-weight: 700; font-size: .95rem }
   function up(e) {
     var tap = drag && !drag.moved && !pinch && Object.keys(ptrs).length === 1;
     delete ptrs[e.pointerId];
-    if (tap && e.type === 'pointerup') { var t = hit(e.clientX, e.clientY); if (t) select(t.g, true); }
+    if (tap && e.type === 'pointerup') { var t = hit(e.clientX, e.clientY); if (t) select(t.g); }
     if (Object.keys(ptrs).length < 2) pinch = null;
     if (!Object.keys(ptrs).length) { drag = null; cv.style.cursor = V.k > 1 ? 'grab' : 'crosshair'; }
   }
@@ -301,13 +306,12 @@ td.lk { font-weight: 700; font-size: .95rem }
   window.addEventListener('resize', sizeCanvas);
 
   var byG = {}; T.forEach(function (t) { byG[t.g] = t; });
-  function select(g, scroll) {
+  function select(g) {
     S.sel = g; save(); card();
     var t = byG[g];
     if (t && V.k > 1 && (t.x < V.x || t.x > V.x + W0 / V.k || t.y < V.y || t.y > V.y + H0 / V.k)) { V.x = t.x - W0 / V.k / 2; V.y = t.y - H0 / V.k / 2; applyView(); }
     else drawTop();
     document.querySelectorAll('#t tbody tr').forEach(function (tr) { tr.classList.toggle('sel', tr.dataset.g === g); });
-    if (scroll) { var tr = document.querySelector('#t tbody tr[data-g="' + g + '"]'); if (tr) tr.scrollIntoView({ block: 'nearest' }); }
   }
 
   function card() {
@@ -347,7 +351,7 @@ td.lk { font-weight: 700; font-size: .95rem }
   var COLS = [
     ['rk', '#', '', null], ['name', 'Town', 'l', function (t) { return t.name; }], ['lk', 'Likeness', '', function (t) { return t.lk; }]
   ].concat(TR.map(function (c) { return [c[0], c[1], '', function (t) { return t[c[0]] == null ? -1 : t[c[0]]; }]; }))
-    .concat([['cname', 'Anchor college', 'l hide-sm', null], ['nt', 'Notes', 'l hide-sm', null]]);
+    .concat([['value', 'Home value', '', function (t) { return t.value == null ? -1 : t.value; }], ['cname', 'Anchor college', 'l hide-sm', null], ['nt', 'Notes', 'l hide-sm', null]]);
   function head() {
     $('t').innerHTML = '<thead><tr>' + COLS.map(function (c) {
       var s = c[3] ? (S.sort === c[0] ? (S.dir < 0 ? 'descending' : 'ascending') : 'none') : null;
@@ -363,6 +367,7 @@ td.lk { font-weight: 700; font-size: .95rem }
       if (S.sub && t.uapop >= 150) return false;
       if (S.stu && t.stud > 300) return false;
       if (S.res && t.seas > 250) return false;
+      var vm = vmax(S.vi); if (vm && (t.value == null || t.value > vm)) return false;
       return true;
     });
     L.forEach(function (t) { t.lk = like(t); });
@@ -383,12 +388,12 @@ td.lk { font-weight: 700; font-size: .95rem }
       var fl = flags(t);
       return '<tr data-g="' + t.g + '"' + (t.g === S.sel ? ' class="sel"' : '') + '><td>' + t.rk + '</td><td class="l nm"><b>' + esc(t.name) + ', ' + t.st + '</b><span>' + fmt(t.pop) + ' people</span></td><td class="lk">' + Math.round(100 * t.lk) + '</td>' +
         TR.map(function (c) { return '<td>' + chip(t[c[0]]) + '</td>'; }).join('') +
-        '<td class="l cn hide-sm">' + esc(t.cname || '–') + '</td><td class="l hide-sm">' + fl.map(function (x) { return '<span class="pill' + (x[1] ? ' warn' : '') + '">' + esc(x[0]) + '</span>'; }).join('') + '</td></tr>';
+        '<td class="hv">' + (t.value ? '$' + (t.value >= 1e6 ? (t.value / 1e6).toFixed(2) + 'M' : Math.round(t.value / 1000) + 'k') : '–') + '</td><td class="l cn hide-sm">' + esc(t.cname || '–') + '</td><td class="l hide-sm">' + fl.map(function (x) { return '<span class="pill' + (x[1] ? ' warn' : '') + '">' + esc(x[0]) + '</span>'; }).join('') + '</td></tr>';
     }).join('');
-    $('t').tBodies[0].innerHTML = rows || '<tr><td colspan="' + COLS.length + '">No towns match. Lower the minimum likeness, widen the population range or clear the search.</td></tr>';
+    $('t').tBodies[0].innerHTML = rows || '<tr><td colspan="' + COLS.length + '">No towns match. Lower the minimum likeness, raise the home value limit, widen the population range or clear the search.</td></tr>';
     $('t').tBodies[0].querySelectorAll('tr[data-g]').forEach(function (tr) { tr.addEventListener('click', function () { select(tr.dataset.g); }); });
     $('more').hidden = R.length <= S.n;
-    $('count').innerHTML = '<b>' + fmt(R.length) + '</b> towns' + (S.cut ? ' scoring ' + S.cut + '+' : '') + (S.q ? ' match “' + esc(S.q) + '”' : ' in range') + ' · showing ' + fmt(Math.min(S.n, R.length));
+    $('count').innerHTML = '<b>' + fmt(R.length) + '</b> towns' + (S.cut ? ' scoring ' + S.cut + '+' : '') + (vmax(S.vi) ? ' at ' + vlab(S.vi) + ' or less' : '') + (S.q ? ' match “' + esc(S.q) + '”' : ' in range') + ' · showing ' + fmt(Math.min(S.n, R.length));
     drawTop();
   }
 
