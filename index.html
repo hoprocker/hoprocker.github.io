@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Relocation Atlases</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Public+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: masthead, then one card per sub-page. Same identity as the Western Relocation Atlas. */
+:root {
+  --bg: #eef2ef; --surface: #fbfcfb; --ink: #17262a; --muted: #55676a; --line: #cfd9d5; --accent: #14605a; --tint: #e2ece8; --head: #22373b; --head-ink: #eef5f3;
+  --display: "Barlow Condensed", "Arial Narrow", "Helvetica Neue", Arial, sans-serif; --body: "Public Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #101a1b; --surface: #172425; --ink: #e4ecea; --muted: #9bb0ad; --line: #2b3d3e; --accent: #62c9b4; --tint: #1e3031; --head: #0b1415; --head-ink: #dce7e4; color-scheme: dark } }
+:root[data-theme="dark"] { --bg: #101a1b; --surface: #172425; --ink: #e4ecea; --muted: #9bb0ad; --line: #2b3d3e; --accent: #62c9b4; --tint: #1e3031; --head: #0b1415; --head-ink: #dce7e4; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 400 15px/1.5 var(--body); margin: 0 }
+.wrap { max-width: 1200px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 56px; display: flex; flex-direction: column; gap: 24px }
+@media (min-width: 700px) { .wrap { padding-left: max(32px, env(safe-area-inset-left, 0px)); padding-right: max(32px, env(safe-area-inset-right, 0px)) } }
+a { color: var(--accent) }
+a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px }
+h1 { font: 700 clamp(2.3rem, 6vw, 3.8rem)/1 var(--display); text-transform: uppercase; letter-spacing: .02em; margin: 0; text-wrap: balance }
+h2 { font: 700 1.5rem/1.1 var(--display); text-transform: uppercase; letter-spacing: .03em; margin: 0 }
+.eyebrow { font-size: .72rem; letter-spacing: .07em; text-transform: uppercase; font-weight: 600; color: var(--muted); margin: 0 }
+.mast { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; border-bottom: 1px solid var(--line) } .mast p { margin: 0; max-width: 80ch }
+.grp { display: flex; flex-direction: column; gap: 12px }
+.cards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 16px }
+.card { display: flex; flex-direction: column; gap: 8px; height: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 16px 18px 18px; color: var(--ink); text-decoration: none; transition: border-color .15s, background .15s }
+.card:hover { border-color: var(--accent); background: var(--tint) }
+.card h2 { color: var(--ink) } .card:hover h2 { color: var(--accent) }
+.card p { margin: 0; font-size: .92rem; color: var(--muted) }
+.card .go { margin-top: auto; padding-top: 6px; font: 600 .78rem/1 var(--body); letter-spacing: .05em; text-transform: uppercase; color: var(--accent) }
+.card.lead { background: var(--head); border-color: var(--head); color: var(--head-ink) }
+.card.lead h2, .card.lead:hover h2 { color: var(--head-ink) }
+.card.lead p, .card.lead .eyebrow { color: var(--head-ink); opacity: .8 }
+.card.lead .go { color: var(--head-ink) }
+.card.lead:hover { border-color: var(--accent) }
+@media (min-width: 760px) { .cards li.wide { grid-column: 1 / -1 } .card.lead h2 { font-size: 2rem } }
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="mast">
+<p class="eyebrow">Relocation research · updated November 2026</p>
+<h1>Relocation Atlases</h1>
+<p>Six tools for deciding where to move: an eleven-state screen of every census tract in the West, closer looks at five metros and the homes for sale in them, a national search for small towns, and a census explorer for all 387 U.S. metros.</p>
+</header>
+
+<section class="grp" aria-labelledby="h-west">
+<p class="eyebrow" id="h-west">The Western Relocation Atlas and its companions</p>
+<ul class="cards">
+<li class="wide"><a class="card lead" href="atlas/index.html">
+<p class="eyebrow">Eleven-state screen · home values as of August 2026</p>
+<h2>Western Relocation Atlas</h2>
+<p>Every census tract in the Mountain West, Washington, Oregon and California, scored on seven criteria and grouped into 148 areas, with state maps and per-area neighborhood maps.</p>
+<span class="go">Open the atlas ›</span>
+</a></li>
+<li><a class="card" href="metro_atlas/index.html">
+<p class="eyebrow">School and walkable-core layers · October 10, 2026</p>
+<h2>Metro Neighborhood Atlas</h2>
+<p>Every neighborhood in the Colorado Front Range, Salt Lake, Seattle, Bellingham and Silicon Valley, scored with the atlas criteria plus school test growth, pre-K, hands-on K–8 schools and walkable cores.</p>
+<span class="go">Open ›</span>
+</a></li>
+<li><a class="card" href="adu_shortlist/index.html">
+<p class="eyebrow">Listings read October 7–8, 2026</p>
+<h2>ADU Shortlist</h2>
+<p>For-sale homes from $300k to $950k with a second unit already built, across seven Colorado, Utah and Washington areas, each scored on its neighborhood.</p>
+<span class="go">Open ›</span>
+</a></li>
+<li><a class="card" href="big_garage/index.html">
+<p class="eyebrow">Listings read October 9, 2026</p>
+<h2>Big Garage Shortlist</h2>
+<p>For-sale homes from $300k to $950k with a large detached garage, shop or outbuilding, mostly along the Front Range, with a first look at Seattle and Bellingham.</p>
+<span class="go">Open ›</span>
+</a></li>
+</ul>
+</section>
+
+<section class="grp" aria-labelledby="h-nat">
+<p class="eyebrow" id="h-nat">Nationwide</p>
+<ul class="cards">
+<li><a class="card" href="small_towns/index.html">
+<p class="eyebrow">Small-town screen · updated November 4, 2026</p>
+<h2>Towns Like Yellow Springs</h2>
+<p>Every U.S. town of 1,500 to 60,000 people, compared on fifteen traits of character and practicality, with Yellow Springs, Ohio, kept on the map as a reference point.</p>
+<span class="go">Open ›</span>
+</a></li>
+<li><a class="card" href="census_explorer/index.html">
+<p class="eyebrow">Census estimates 2010–2025 · ACS 2009–13 and 2020–24</p>
+<h2>U.S. Metro Explorer</h2>
+<p>All 387 U.S. metropolitan areas, sortable by growth, families, aging, turnover or housing, with two metros' neighborhood maps side by side.</p>
+<span class="go">Open ›</span>
+</a></li>
+</ul>
+</section>
+</main>
+</body>
+</html>
