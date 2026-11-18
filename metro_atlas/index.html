@@ -100,6 +100,7 @@ path.water { fill: #c4cdd0; fill-rule: evenodd; stroke: #7f98a2; stroke-width: .
 <div class="grp"><span class="lab">Dots on map</span><div class="chks" id="f-dots" role="group" aria-label="Location dots shown on the map"></div></div>
 <div class="grp"><label class="lab" for="f-val">Median home value up to</label><div class="vrow"><input type="range" id="f-val" min="0" max="48" step="1"><output id="f-val-o" for="f-val"></output></div></div>
 <div class="grp"><span class="lab">Budget</span><label class="chk"><input type="checkbox" id="f-b"> Only $300k–$950k with an airport</label></div>
+<div class="grp"><label class="lab" for="f-pre">Score with</label><select id="f-pre"></select></div>
 <div class="grp"><span class="lab">Weights</span><button type="button" class="btn" id="wx-btn" aria-expanded="false" aria-controls="wx">Adjust</button></div>
 </div>
 <div class="wx" id="wx" hidden><ol id="wx-list"></ol>
@@ -125,6 +126,7 @@ path.water { fill: #c4cdd0; fill-rule: evenodd; stroke: #7f98a2; stroke-width: .
 <li><b>Schools</b> is test results, grades 3–8, 2009–19 (Stanford Education Data Archive), from the nearest three to five public schools in the neighborhood’s own school district (Census Bureau 2025 district maps), closer ones counting more; charter schools are left out because they have no attendance area. <b>Growth</b> is how much faster or slower students in those same schools learn each year than the U.S. average (the archive’s grade-to-grade growth). It reflects the schools more than who lives nearby. Both compare across the 15,188 western neighborhoods. Updated November 2026: Schools used to average every school within 3 km regardless of district, and Growth used the archive’s cohort trend (whether each year’s class scores higher than the last), which is a different thing. Attendance zones inside a district are not public, so check a specific address with the district.</li>
 <li><b>Pre-K</b> has two numbers: play-based programs nearby (Montessori, Waldorf, Reggio-inspired, nature-based) and top-rated ones (NAEYC-accredited, Colorado Shines 4–5, Washington Early Achievers 4–5). They are percentiles within each state; Utah’s top-rated number counts NAEYC only. Untick approaches under “Play-based pre-K counts” to score only the ones you care about; the map, table, profile and score follow.</li>
 <li><b>K–8</b> counts public and charter Montessori, Waldorf-method, EL Education and IB Primary Years schools, plus progressive or project-based “option” schools (such as Seattle’s Orca and Salmon Bay K–8s, Jefferson County Open School and Salt Lake’s Open Classroom; my judgment from each school’s own description) within about a 20-minute drive, across Colorado, Utah, Washington, California and Nevada. Untick types under “K–8 hands-on counts” to score only the ones you care about; the map, table, profile and score follow.</li>
+<li><b>Score with</b> picks a preset set of weights; it moves the sliders under Weights, and moving any slider switches it to “Your own weights.” <b>Original atlas weights</b> is the starting mix (the school, pre-K and tree layers off). <b>Hands-on schools first</b> leans on hands-on K–8 and play-based pre-K, then schools and growth, with walkability next. <b>Wooded and outdoorsy</b> puts tree cover and hands-on schools first, then parks, quiet and mountains. <b>Walkable and lively</b> puts music and a walkable core first. <b>Everything equally</b> weights all twelve the same. <b>Map shows</b> only colors the map; it never changes the weights.</li>
 <li><b>Walkable core</b> is access to a walkable town centre: full within about 5 km, fading out by 15 km, scaled by the centre’s size (set Small-core credit in Weights).</li>
 <li><b>Bainbridge Island</b> is in Kitsap County and connects to Seattle only by a 35-minute ferry, so its preschool, K–8 and walkable-core scores count only places reachable without crossing the water (the island itself, plus Poulsbo and the rest of Kitsap by the Agate Pass bridge), and Seattle-side scores no longer count island programs. Its walkable core is Winslow, the island’s downtown. Odyssey, the district’s free multiage, project-based K–8 choice program, is marked as a progressive option school.</li>
 <li><b>Silicon Valley.</b> Preschools come from California’s child care licensing list. California publishes no per-program quality ratings, so Top-rated pre-K there counts NAEYC-accredited programs only and runs lower than in Washington or Colorado. Hands-on K–8 schools there are mostly parent-participation, open-classroom and project-based choice schools (Discovery Charter, Bullis Charter, Ohlone, McAuliffe, Washington Open, Stevenson PACT, Redwood City’s Orion) plus San Jose Unified’s IB schools; we found no public Montessori, Waldorf or EL Education schools in the area.</li>
@@ -238,8 +240,22 @@ kpEl.innerHTML = KP.map(function (a) { return '<label class="chk"><input type="c
 kpEl.addEventListener('change', function (e) { var k = e.target.getAttribute('data-k'); if (!k) return; S.kp[k] = e.target.checked ? 1 : 0; save(); update(); });
 var cfEl = document.getElementById('cf'), cfO = document.getElementById('cf-o');
 cfEl.addEventListener('input', function () { S.cf = +cfEl.value; save(); syncW(); update(); });
-function syncW() { var tot = 0; S.w.forEach(function (x) { tot += x; }); CRIT.forEach(function (c, i) { document.getElementById('w' + i).value = S.w[i]; document.getElementById('o' + i).textContent = S.w[i] + ' · ' + (tot ? Math.round(100 * S.w[i] / tot) : 0) + '%'; }); cfEl.value = S.cf; cfO.textContent = S.cf + '%'; }
+function syncW() { var tot = 0; S.w.forEach(function (x) { tot += x; }); CRIT.forEach(function (c, i) { document.getElementById('w' + i).value = S.w[i]; document.getElementById('o' + i).textContent = S.w[i] + ' · ' + (tot ? Math.round(100 * S.w[i] / tot) : 0) + '%'; }); cfEl.value = S.cf; cfO.textContent = S.cf + '%'; if (window.__pre !== false && document.getElementById('f-pre') && typeof matchPreset === 'function') document.getElementById('f-pre').value = matchPreset(); }
 function update() { recompute(); paint(); render(); card(); }
+/* weight presets; moving any slider shows "Your own weights" */
+var PRESETS = [['atlas', 'Original atlas weights', DEFW.slice()],
+  ['hands', 'Hands-on schools first', [0, 1, 2, 2, 4, 2, 3, 5, 2, 3, 6, 2]],
+  ['wood', 'Wooded and outdoorsy', [1, 3, 4, 4, 3, 2, 3, 3, 1, 2, 5, 6]],
+  ['city', 'Walkable and lively', [6, 2, 2, 2, 3, 2, 6, 1, 1, 1, 2, 1]],
+  ['eq', 'Everything equally', CRIT.map(function () { return 1; })]];
+var preEl = document.getElementById('f-pre');
+preEl.innerHTML = PRESETS.map(function (p) { return '<option value="' + p[0] + '">' + p[1] + '</option>'; }).join('') + '<option value="custom">Your own weights</option>';
+function matchPreset() { for (var k = 0; k < PRESETS.length; k++) if (PRESETS[k][2].every(function (x, i) { return x === S.w[i]; })) return PRESETS[k][0]; return 'custom'; }
+preEl.addEventListener('change', function () {
+  var p = PRESETS.filter(function (x) { return x[0] === preEl.value; })[0];
+  if (!p) { wx.hidden = false; wxBtn.setAttribute('aria-expanded', 'true'); return; }
+  S.w = p[2].slice(); save(); syncW(); update();
+});
 
 /* map */
 var box = document.getElementById('mapbox'), wrap = document.getElementById('mapwrap'), img = document.getElementById('mapimg'), svg = document.getElementById('mapsvg');

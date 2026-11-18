@@ -96,6 +96,7 @@ svg.ov .tr path.b3h { stroke: #fff; stroke-width: 5.5px } svg.ov .tr path.b3 { s
 .wx-row output { font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; font-size: .9rem }
 .cfrow { display: grid; grid-template-columns: auto 1fr auto; gap: 2px 10px; align-items: center; border-top: 1px solid var(--line); padding-top: 8px; margin-top: 2px } .cfrow label { font-weight: 600; font-size: .92rem } .cfrow input { width: 100%; accent-color: var(--accent); margin: 0; height: 30px } .cfrow output { font-variant-numeric: tabular-nums; font-weight: 600; font-size: .9rem } .cfrow p { grid-column: 1 / -1; margin: 0; font-size: .8rem; color: var(--muted) } #wx-float .cfrow p, #lb-wx .cfrow p { display: none }
 .wx-act { display: flex; flex-wrap: wrap; gap: 8px }
+.wx-prerow { display: flex; align-items: center; gap: 10px } .wx-prerow label { font-weight: 600; font-size: .92rem } .wx-prerow select { font: 600 .86rem var(--body); color: var(--ink); background: var(--surface); border: 1px solid var(--ink); border-radius: 4px; padding: 6px 8px; flex: 1; min-width: 0 }
 .wx-note { display: flex; flex-direction: column; gap: 8px; max-width: 60ch } .wx-note p { margin: 0 } .wx-note ul { margin: 0; padding-left: 1.1em; display: flex; flex-direction: column; gap: 5px }
 #wx-float { position: fixed; z-index: 6; right: clamp(8px, 2vw, 24px); top: calc(var(--nav-b, 56px) + 8px); width: min(430px, calc(100vw - 16px)); max-height: calc(100vh - var(--nav-b, 56px) - 24px); overflow: auto; border-radius: 6px;
   box-shadow: 0 12px 32px var(--shadow) }
@@ -182,13 +183,15 @@ dialog.lb::backdrop { background: var(--head) }
 <figure><div class="pan"><button type="button" class="zoom" data-key="west" data-full="maps/base_west_2x.jpg" data-title="The West" aria-label="Enlarge the map of The West"><img src="maps/base_west.jpg" width="1650" height="1689" alt="Map of the western United States with each area shaded by score and the top twenty labelled"><svg class="ov" aria-hidden="true"></svg></button></div><figcaption><span>Click the map for a larger view, or a dot for that area&#8217;s neighborhoods. The top twenty areas are labelled with their rank.<span class="narrow"> Or swipe it sideways here.</span></span><div class="legend"><span><svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="5.4" fill="#a6d96a" stroke="#222" stroke-width="1.2"/></svg> area that passes both filters</span><span><i class="scale"></i> score, low to high</span><span><svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1.2L12.8 7L7 12.8L1.2 7Z" fill="#a6d96a" stroke="#6a1b9a" stroke-width="1.8"/></svg> over $950k</span><span><svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.2L7 5.2L11 1.2L12.8 3L8.8 7L12.8 11L11 12.8L7 8.8L3 12.8L1.2 11L5.2 7L1.2 3Z" fill="#a6d96a" stroke="#3d3d3d" stroke-width="1.4"/></svg> no airline airport</span><span><svg width="13" height="13" viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="2" width="10" height="10" fill="#a6d96a" stroke="#00695c" stroke-width="1.8"/></svg> under $300k</span></div><span>Base map &#169; OpenStreetMap contributors.</span></figcaption></figure></div>
 <div class="wxwrap"><div id="wx-home"><div class="wx" id="wx">
 <div class="wx-top"><h3>Your weights</h3><button type="button" class="btn" id="wx-close">Close</button></div>
+<div class="wx-prerow"><label for="wx-pre">Score with</label><select id="wx-pre"></select></div>
 <p class="wx-sum" id="wx-sum"></p>
 <ol class="wx-list" id="wx-list"></ol>
 <div class="wx-act"><button type="button" class="btn" id="wx-b3">Show best three</button><button type="button" class="btn" id="wx-ord">Weights from order</button><button type="button" class="btn" id="wx-all">All equal</button><button type="button" class="btn" id="wx-eq">Reset to original</button></div>
 </div></div>
 <div class="wx-note"><p><b>Set what matters to you.</b> Move a slider and every table, state summary and map on this page is recalculated from all 15,188 neighborhoods.</p>
 <ul><li>The percentage is each criterion&#8217;s share of the score. A slider at zero leaves that criterion out.</li>
-<li>Drag a row by its handle to change the column order in every table. &#8220;Weights from order&#8221; turns that order into weights from 12 down to 1.</li>
+<li><b>Score with</b> picks a preset set of weights. <b>Good schools for the price</b> puts schools and affordability first, then learning growth and hands-on K&#8211;8. <b>Hands-on schools first</b> leans on hands-on K&#8211;8 and play-based pre-K, then schools and growth. <b>Wooded and outdoorsy</b> puts tree cover and hands-on schools first, then parks, quiet and mountains. <b>Walkable and lively</b> puts live music and a walkable core first. Moving any slider switches it to &#8220;Your own weights&#8221;; presets don&#8217;t change the column order.</li>
+<li>Drag a row by its handle to change the column order in every table. &#8220;Weights from order&#8221; turns that order into weights from 10 down to 1, evenly spaced.</li>
 <li>&#9650; and &#9660; beside a rank show how far the area has moved from its place at the original weights.</li>
 <li>The Weights button in the bar above opens this panel from anywhere on the page, and every enlarged map has the same button, so you can watch the map change as you adjust. Your setting is kept in this browser where storage is allowed.</li></ul></div></div>
 <p class="cap" id="top-cap">Top twenty areas</p>
@@ -711,12 +714,13 @@ function syncPanel() {
   var eq = isEqual();
   document.getElementById('wx-sum').textContent = zero ? 'All sliders are at zero, so the original weights apply.' : eq ? 'Original weights: mountains count double parks, and the two together count the same as each other criterion.' : 'Your weights: ' + summary() + '.';
   document.getElementById('wx-eq').disabled = S.o.join() === DEFO.join() && S.w.join() === DEFW.join();
+  document.getElementById('wx-pre').value = matchPreset();
   document.getElementById('wx-all').disabled = !zero && S.w.every(function (x) { return x === S.w[0]; });
   openBtn.classList.toggle('on', !eq); openBtn.querySelector('span').textContent = eq ? '' : 'custom';
 }
 document.getElementById('wx-eq').addEventListener('click', function () { S = { o: DEFO.slice(), w: DEFW.slice() }; changed(); });
 document.getElementById('wx-all').addEventListener('click', function () { S.w = DEFO.map(function () { return 5; }); changed(); });
-document.getElementById('wx-ord').addEventListener('click', function () { S.o.forEach(function (ci, p) { S.w[ci] = NC - p; }); changed(); });
+document.getElementById('wx-ord').addEventListener('click', function () { S.o.forEach(function (ci, p) { S.w[ci] = Math.round(1 + 9 * (NC - 1 - p) / (NC - 1)); }); changed(); });
 function floatOpen() { return panel.parentNode === floatEl; }
 function openFloat() {
   home.style.minHeight = home.offsetHeight + 'px'; floatEl.appendChild(panel); floatEl.hidden = false; openBtn.setAttribute('aria-expanded', 'true');
@@ -751,6 +755,21 @@ function renderAll() {
   if (onRender) onRender();
 }
 function changed() { save(); syncPanel(); if (!pending) pending = window.requestAnimationFrame(renderAll); }
+/* weight presets (order of criteria = CRIT): music, mountains, parks, quiet, schools, climate, core, afford, hands-on, pre-K, growth, trees.
+   They set weights only; column order stays as you dragged it. */
+var PRESETS = [['orig', 'Original weights', DEFW.slice()],
+  ['value', 'Good schools for the price', [1, 2, 1, 2, 6, 2, 2, 6, 3, 1, 3, 1]],
+  ['hands', 'Hands-on schools first', [0, 1, 2, 2, 4, 2, 3, 0, 6, 5, 3, 2]],
+  ['wood', 'Wooded and outdoorsy', [1, 3, 4, 4, 3, 2, 3, 0, 5, 3, 2, 6]],
+  ['city', 'Walkable and lively', [6, 2, 2, 2, 3, 2, 6, 0, 2, 1, 1, 1]],
+  ['eq', 'Everything equally', DEFO.map(function () { return 5; })]];
+function matchPreset() { for (var k = 0; k < PRESETS.length; k++) if (PRESETS[k][2].every(function (x, i) { return x === S.w[i]; })) return PRESETS[k][0]; return 'custom'; }
+(function () {
+  var el = document.getElementById('wx-pre');
+  el.innerHTML = PRESETS.map(function (p) { return '<option value="' + p[0] + '">' + p[1] + '</option>'; }).join('') + '<option value="custom">Your own weights</option>';
+  el.value = matchPreset();
+  el.addEventListener('change', function () { var p = PRESETS.filter(function (x) { return x[0] === el.value; })[0]; if (!p) return; S.w = p[2].slice(); changed(); });
+})();
 /* walkable core: Q[6] is access out of 100 (x 2N), rebuilt from each tract's candidate cores [distance credit, size, ...]
    value = max over cores of min(1, F + (1 - F) * size) * distance, F = small-core credit (20-100%) */
 function applyCore() {
